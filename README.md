@@ -8,13 +8,23 @@ This library is designed to detect and verify various 3D file formats by analyzi
 ### 1. **STL (Stereolithography)**
    - **Binary STL**
      - Identified by an 80-byte header followed by a 4-byte unsigned integer indicating the number of triangles.
-     - The expected file size is calculated as: `84 + (50 * num_triangles)` bytes.
+     - The expected file size is calculated as: `header_size + (50 * num_triangles)` bytes.
+        **why 50?**
+        - 12 bytes → 3 normal vector floats (float32 × 3)
+        - 36 bytes → 3 vertices (float32 × 9)
+        - 2 bytes → Attribute byte count
      - Detection method: Read the first 80 bytes, verify format, and check the expected file size.
-   
+
+returns ```is_valid: bool, mesage: str, triangle_count: int```
+
+*in the case of an error, triangle_count = 0*
+
    - **ASCII STL**
      - Starts with the keyword `solid` followed by the model name.
      - Contains lines with `facet`, `vertex`, and `endfacet` keywords.
      - Detection method: Read the first few lines and confirm the presence of expected keywords.
+
+returns ```is_valid:bool```
 
 ### 2. **OBJ (Wavefront OBJ)**
    - Plain text format, human-readable.
@@ -36,20 +46,24 @@ This library is designed to detect and verify various 3D file formats by analyzi
    
 ## How Detection Works
 The library follows a structured detection process:
-1. **File Extension Check** (Optional, but useful as a first filter)
-2. **File Size Verification** (Ensures file is not empty or corrupted)
-3. **Binary Signature Analysis** (For binary STL)
-4. **Keyword Matching** (For text-based OBJ and ASCII STL)
-5. **Archive & XML Validation** (For 3MF)
+1. ClamAV to scan files for general malware
+2. **DoS** specific vulnerablilities 
+   - **File Size Verification** (Ensures file is not empty or corrupted)
+   - **Binary Signature Analysis** (For binary STL)
+     
+   - **Keyword Matching** (For text-based OBJ and ASCII STL)
+   - **Archive & XML Validation** (For 3MF)
 
 ## Security & Safety Considerations
 - **Basic Pre-Scan Protection**
-  - Ensures the file is what it claims to be before processing.
+  - Helps ensures the file is what it claims to be before processing.
   - Helps prevent incorrect file types from being loaded into a 3D application.
   
 - **Potential Security Risks Mitigated**
   - Detects malformed or incomplete files.
-  - Reduces risk of certain attack vectors (e.g., malformed 3MF files attempting to exploit XML parsing vulnerabilities).
+  - Reduces risk of certain attack vectors e.g.
+     - malformed 3MF files attempting to exploit XML parsing vulnerabilities
+     - memory over flow for STLs, OBJs
   - Can be extended to include additional validation, such as checking for overly large files that may cause memory issues.
 
 ## Example Usage
@@ -57,10 +71,11 @@ The library follows a structured detection process:
 None
 ```
 
-## Future Improvements
+## Possible Improvements
 - **Checksum validation** to detect file corruption.
 - **Support for detecting specific errors** (malware, or file error).
 - **Deeper security scans** (e.g., sandboxing for XML parsing in 3MF files).
+- **more file type supports**
 
 <br></br>
 
