@@ -21,11 +21,19 @@ This library is designed to detect and verify various 3D file formats by analyzi
    - Uses keywords such as `v` (vertex), `vn` (vertex normal), `vt` (texture coordinate), `f` (face), and `usemtl` (material usage).
    - Detection method: Scan the first few lines and ensure at least one of the key OBJ-related keywords is present.
 
-### 3. **3MF (3D Manufacturing Format)**
-   - Compressed ZIP archive containing XML files.
-   - Key file: `[Content_Types].xml` which must include an entry for `application/vnd.ms-package.3dmanufacturing-3dmodel+xml`.
-   - Detection method: Verify that the file is a ZIP archive and check for the existence and contents of `[Content_Types].xml`.
+### 3. **3MF (3D Manufacturing Format)** (future)
+   - <None>
 
+### 4. **STEP ()** (future)
+   - <None>
+
+### 5. **3DS ()** (future)
+   - <None>
+
+### 5. **IGES ()** (future)
+   - <None>
+   
+   
 ## How Detection Works
 The library follows a structured detection process:
 1. **File Extension Check** (Optional, but useful as a first filter)
@@ -46,18 +54,22 @@ The library follows a structured detection process:
 
 ## Example Usage
 ```python
-from file_detector import detect_3d_file
-
-file_path = "model.stl"
-valid, message = detect_3d_file(file_path)
-print(valid, message)
+None
 ```
 
 ## Future Improvements
 - **Checksum validation** to detect file corruption.
-- **Support for more formats** (e.g., PLY, glTF, AMF).
+- **Support for detecting specific errors** (malware, or file error).
 - **Deeper security scans** (e.g., sandboxing for XML parsing in 3MF files).
 
-## Conclusion
-This library provides a fast and effective way to detect common 3D file formats before further processing. It serves as an essential first step in verifying file integrity and ensuring safety in 3D modeling workflows.
+<br></br>
 
+<br></br>
+
+<br></br>
+
+<br></br>
+
+<br></br>
+
+<br></br>
