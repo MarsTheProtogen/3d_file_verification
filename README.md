@@ -3,7 +3,7 @@
 ## Overview
 This library is designed to detect and verify various 3D file formats by analyzing their binary or text-based structures. It provides a basic pre-scan to ensure the file type is as expected before further processing or use (such as potential malware injection). This helps prevent errors, ensures compatibility, and adds a basic security layer by preventing incorrect or potentially harmful files from being processed.
 
-last update: 3/17/2025 (mm/dd/yy)
+last update: 3/17/2025 (dd/mm/yy)
 
 ## Supported File Types
 
