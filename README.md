@@ -47,7 +47,7 @@ returns is_valid:bool
    - if your reading this, take a water break 
 
 ### 5. **IGES** (future update)
-   - <None>
+   - Silence is golden... until the llamas start singing
    
    
 ## How Detection Works
@@ -121,7 +121,7 @@ if __name__ == "__main__":
     # send_email(recipient, subject, body)
 ```
 
-## tools
+## Tools
 The scanning tools work based off of key words in the file, 
 so rather than mannualy seaching for them,you can find the 
 ones that will be detected with `kwd_search.py`. In 
