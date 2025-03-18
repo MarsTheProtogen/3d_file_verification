@@ -1,157 +1,169 @@
 # 3D File Verification
 
-## Overview
-This library is designed to detect and verify various 3D file formats by analyzing their binary or text-based structures. It provides a basic pre-scan to ensure the file type is as expected before further processing or use (such as potential malware injection). This helps prevent errors, ensures compatibility, and adds a basic security layer by preventing incorrect or potentially harmful files from being processed.
+## 📌 Overview
+This library is designed to detect and verify various **3D file formats** by analyzing their **binary or text-based structures**. It provides a **pre-scan** to ensure the file type is as expected before further processing, preventing errors, ensuring compatibility, and adding a **basic security layer** to detect incorrect or potentially harmful files.
 
-last update: 3/17/2025 (dd/mm/yy)
+📅 **Last Update:** *March 17, 2025*
 
-## Supported File Types
+---
 
-### 1. **STL (Stereolithography)**
-   - **Binary STL**
-     - Identified by an 80-byte header followed by a 4-byte unsigned integer indicating the number of triangles.
-     - The expected file size is calculated as: `header_size + (50 * num_triangles)` bytes.
-        **why 50?**
-        - 12 bytes → 3 normal vector floats (float32 × 3)
-        - 36 bytes → 3 vertices (float32 × 9)
-        - 2 bytes → Attribute byte count
-     - Detection method: Read the first 80 bytes, verify format, and check the expected file size.
+## 📂 Supported File Types
 
+### 🟢 **STL (Stereolithography)**
+#### 🔹 **Binary STL**
+- Identified by an **80-byte header** followed by a **4-byte unsigned integer** indicating the number of triangles.
+- The expected file size is calculated as: `header_size + (50 * num_triangles)` bytes.
+
+   **Why 50 bytes per triangle?**
+   - 12 bytes → 3 normal vector floats (`float32 × 3`)
+   - 36 bytes → 3 vertices (`float32 × 9`)
+   - 2 bytes → Attribute byte count
+
+   ✅ **Detection Method:** Reads the first **80 bytes**, verifies format, and checks the expected file size.
+   
 ```python
-returns is_valid: bool, mesage: str, triangle_count: int
+returns is_valid: bool, message: str, triangle_count: int
 ```
 
-*in the case of an error, triangle_count = 0*
+🔹 **ASCII STL**
+- Starts with the keyword `solid` followed by the model name.
+- Contains lines with `facet`, `vertex`, and `endfacet` keywords.
+- ✅ **Detection Method:** Reads the first few lines and confirms the presence of expected keywords.
 
-   - **ASCII STL**
-     - Starts with the keyword `solid` followed by the model name.
-     - Contains lines with `facet`, `vertex`, and `endfacet` keywords.
-     - Detection method: Read the first few lines and confirm the presence of expected keywords.
-
-```pyhton
-returns is_valid:bool
+```python
+returns is_valid: bool
 ```
 
-### 2. **OBJ (Wavefront OBJ)**
-   - Plain text format, human-readable.
-   - Uses keywords such as `v` (vertex), `vn` (vertex normal), `vt` (texture coordinate), `f` (face), and `usemtl` (material usage).
-   - Detection method: Scan the first few lines and ensure at least one of the key OBJ-related keywords is present.
+---
 
-### 3. **3MF** (future update)
-   - Nothing here. for now...
+### 🟢 **OBJ (Wavefront OBJ)**
+- **Plain text format**, human-readable.
+- Uses keywords like `v`, `vn`, `vt`, `f`, and `usemtl`.
+- ✅ **Detection Method:** Scans the first few lines to ensure at least one OBJ-related keyword is present.
 
-### 4. **STEP** (future update)
-   - no one but us chickens here! 🐔
+---
 
-### 5. **3DS** (future update)
-   - if your reading this, take a water break 
+### 🔜 **Future Support**
+#### **3MF** → _(Coming Soon)_
+📌 Nothing here... for now.
 
-### 5. **IGES** (future update)
-   - Silence is golden... until the llamas start singing
-   
-   
-## How Detection Works
-The library follows a structured detection process:
-1. ClamAV to scan files for general malware
-2. **DoS** specific vulnerablilities (processing crashes, over utilization ect.)
-   - **File Size Verification** (Ensures file is not empty or corrupted)
-   - **Binary Signature Analysis** (For binary STL)
-     
-   - **Keyword Matching** (For text-based OBJ and ASCII STL)
-   - **Archive & XML Validation** (For 3MF)
+#### **STEP** → _(Planned)_
+🐔 No one but us chickens here!
 
-## Security & Safety Considerations
-- **Basic Pre-Scan Protection**
-  - Helps ensures the file is what it claims to be before processing.
-  - Helps prevent incorrect file types from being loaded into a 3D application.
-  
-- **Potential Security Risks Mitigated**
-  - Detects malformed or incomplete files.
-  - Reduces risk of certain attack vectors e.g.
-     - malformed 3MF files attempting to exploit XML parsing vulnerabilities
-     - memory over flow for STLs, OBJs
-  - Can be extended to include additional validation, such as checking for overly large files that may cause memory issues.
+#### **3DS** → _(Planned)_
+💧 If you're reading this, take a water break!
 
-## Example Usage
+#### **IGES** → _(Planned)_
+🎶 Silence is golden... until the llamas start singing.
 
-##### **3d_verification.py**
-For STLs
+---
+
+## 🔍 How Detection Works
+
+1️⃣ **Malware Scan** → Uses **ClamAV** to detect harmful files.
+
+2️⃣ **Denial of Service (DoS) Protection** → Prevents processing crashes & resource exhaustion.
+
+3️⃣ **File Size Verification** → Ensures file is neither empty nor corrupted.
+
+4️⃣ **Binary Signature Analysis** → Verifies binary STL structure.
+
+5️⃣ **Keyword Matching** → Confirms text-based OBJ & STL integrity.
+
+6️⃣ **Archive/XML Validation** → _(Future feature for 3MF)_
+
+---
+
+## 🔐 Security & Safety Considerations
+
+✅ **Pre-Scan Protection:**
+- Ensures the file **matches the expected format** before further processing.
+- Prevents incorrect file types from being **loaded into a 3D application**.
+
+⚠️ **Potential Security Risks Mitigated:**
+- Detects **malformed or incomplete files**.
+- Reduces **attack vectors** like:
+   - Malformed **3MF files** exploiting XML parsing vulnerabilities.
+   - Memory overflow attacks on **STLs/OBJs**.
+- Can be extended for **further validation** (e.g., large file size detection to prevent crashes).
+
+---
+
+## 📌 Example Usage
+
+#### **🔹 3D File Verification (STL)**
 ```python
-...
-
 if __name__ == "__main__":
     file_path = "test.stl"  # Replace with your STL file path.
-
-    """
-    replace xxx with the type of STL is being scaned
-    or you could brute force it :D, the functions are made to fail fast then test
-    """
+    
+    # Replace 'xxx' with the type of STL being scanned
     is_valid, message, num_facets = validate_xxx_stl(file_path)
-    print(is_valid)      # Boolean indicating validity.
-    print(message)       # Descriptive message, can contain unrecognised keywords for text based
-    print(num_facets)    # Set of unrecognized keywords (if any).
+    print(is_valid)      # Boolean indicating validity
+    print(message)       # Message, including unrecognized keywords
+    print(num_facets)    # Number of facets (if applicable)
 ```
-For OBJs
-```python
-...
 
+#### **🔹 OBJ Verification**
+```python
 if __name__ == "__main__":
    file_path = "malware test/test_files/detect stl test.stl"
    is_valid, message = is_ascii_stl(file_path)
    print(message)
 ```
 
-##### **clam.py**
+#### **🔹 ClamAV Scan (clam.py)**
 ```python
-...
-
 if __name__ == "__main__":
-    # Example usage
     filename = "test.txt"
     files, scan_results = clam_scan(filename)
-
+    
     """
-    looks like the code for the email sender is on a coffee break
-    (send_email() hasn't been tested the moment)
+    Looks like the email sender is on a coffee break ☕
+    (send_email() hasn't been tested yet)
     """
-
     # recipient = "your_email@example.com"
     # subject = "ClamAV Scan Results"
     # body = f"Here are the ClamAV scan results for {filename}:\n\n{scan_results}"
     # send_email(recipient, subject, body)
 ```
 
-## Tools
-The scanning tools work based off of key words in the file, 
-so rather than mannualy seaching for them,you can find the 
-ones that will be detected with `kwd_search.py`. In 
+---
+
+## 🛠️ Tools
+
+The scanning tools work by detecting **keywords** in the file rather than manual searching. Use `kwd_search.py` to extract them automatically:
+
 ```python
+#rest of the kwd_search file
 ...
-
+ 
 if __name__ == '__main__':
-
-   file_path = 'file/path'  # Replace with your file path 
+   file_path = 'file/path'  # Replace with your file path
    keys = extract_keywords(file_path)
-   ...
 ```
-you need to replace `file_path` with the actual text-based file. 
-the output will printout verticaly the found kewords,
-along with a copy-pasteable list that can be transfered to the STL and OBJ files
+📌 Replace `file_path` with the actual text-based file.
+📌 The output will **list detected keywords** vertically and provide a **copy-pasteable format** for STL/OBJ.
 
-## Possible Improvements
-- **Checksum validation** to detect file corruption.
-- **Support for detecting specific errors** (malware, or file error).
-- **Deeper security scans** (e.g., sandboxing for XML parsing in 3MF files).
-- **more file type supports**
+---
 
-<br></br>
+## 🚀 Possible Improvements
+✅ **Checksum validation** → Detect file corruption.
+✅ **Error detection** → Identify malware & file format issues.
+✅ **Deeper security scans** → Sandbox execution for **3MF XML parsing**.
+✅ **More file type support** → Expand compatibility beyond **STL/OBJ**.
 
-<br></br>
-
-<br></br>
+---
 
 <br></br>
 
+
 <br></br>
+
+
+<br></br>
+
+
+<br></br>
+
 
 <br></br>
