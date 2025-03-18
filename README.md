@@ -3,6 +3,8 @@
 ## Overview
 This library is designed to detect and verify various 3D file formats by analyzing their binary or text-based structures. It provides a basic pre-scan to ensure the file type is as expected before further processing or use (such as potential malware injection). This helps prevent errors, ensures compatibility, and adds a basic security layer by preventing incorrect or potentially harmful files from being processed.
 
+last update: 3/17/2025 (mm/dd/yy)
+
 ## Supported File Types
 
 ### 1. **STL (Stereolithography)**
@@ -71,6 +73,8 @@ The library follows a structured detection process:
   - Can be extended to include additional validation, such as checking for overly large files that may cause memory issues.
 
 ## Example Usage
+
+##### **3d_verification.py**
 For STLs
 ```python
 ...
@@ -95,6 +99,26 @@ if __name__ == "__main__":
    file_path = "malware test/test_files/detect stl test.stl"
    is_valid, message = is_ascii_stl(file_path)
    print(message)
+```
+
+##### **clam.py**
+```python
+...
+
+if __name__ == "__main__":
+    # Example usage
+    filename = "test.txt"
+    files, scan_results = clam_scan(filename)
+
+    """
+    looks like the code for the email sender is on a coffee break
+    (send_email() hasn't been tested the moment)
+    """
+
+    # recipient = "your_email@example.com"
+    # subject = "ClamAV Scan Results"
+    # body = f"Here are the ClamAV scan results for {filename}:\n\n{scan_results}"
+    # send_email(recipient, subject, body)
 ```
 
 ## tools
